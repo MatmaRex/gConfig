@@ -72,7 +72,7 @@
 				var value = settings[i][2];
 				
 				$.cookie(name, value, {expires: 365});
-				if((''+value).indexOf('|') != -1) {
+				if((''+value).match(/\|/)) {
 					api.post({
 						action:'options', optionname:name, optionvalue:value, token:optionsToken
 					}).done(function(j){ saveSettingsCallback(1) });
@@ -409,7 +409,7 @@
 					$input.attr('name', inputName).attr('id', inputName);
 					$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
 					
-					var isLegacy = !!(gConfig.legacySettings.indexOf(inputName) != -1);
+					var isLegacy = !!($.inArray(inputName, gConfig.legacySettings) != -1);
 					
 					$content.append(
 						$('<tr>').append(
