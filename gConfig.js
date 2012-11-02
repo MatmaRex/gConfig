@@ -208,6 +208,14 @@
 			for(var i=0; i<settings.length; i++) {
 				var sett = settings[i];
 				var value;
+				
+				// do some basic input validation to prevent nondescriptive errors later
+				var errorMessage = "missing % in setting #"+i+" for "+gadget;
+				if(!sett.name) throw errorMessage.replace('%', 'name')
+				if(!sett.desc) throw errorMessage.replace('%', 'desc')
+				if(!sett.type) throw errorMessage.replace('%', 'type')
+				if(sett.default == undefined) throw errorMessage.replace('%', 'default')
+				
 				var isLegacy = false;
 				if(sett.legacy) {
 					var object, property;
