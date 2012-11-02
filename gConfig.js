@@ -12,7 +12,18 @@
  * Author: [[w:pl:User:Matma Rex]]
  */
 (function(mw, $){
-	mw.loader.using(['jquery.cookie', 'mediawiki.api'], function(){
+	mw.loader.using(['jquery.cookie', 'mediawiki', 'mediawiki.api'], function(){
+		mw.messages.set({
+			'gConfig-prefs-page-info': "Na tej stronie możesz zmienić ustawienia wykorzystywane przez gadżety.",
+			'gConfig-prefs-page-title': "Preferencje gadżetów",
+			'gConfig-prefs-personal-link': "Preferencje gadżetów",
+			'gConfig-prefs-save': "Zapisz",
+			'gConfig-prefs-saving': "Zapisywanie...",
+			'gConfig-prefs-saved': "Zapisano!",
+			'gConfig-prefs-invalid-values': "Nieprawidłowe wartości.",
+			'gConfig-prefs-legacy-setting': "To ustawienie jest w tej chwili wpisane na stałe w jednym z twoich plików .js. Usuń je stamtąd, aby stało się modyfikowalne.",
+		});
+		
 		// Global gConfig object.
 		var gConfig = {};
 		// Data of all managed gadgets and settings. 
@@ -355,7 +366,7 @@
 					}
 					
 					if(errors.length > 0) {
-						$('#gconfig-save-status').attr('class', 'error').text("Nieprawidłowe wartości.");
+						$('#gconfig-save-status').attr('class', 'error').text( mw.msg('gConfig-prefs-invalid-values') );
 						for(var i=0; i<errors.length; i++) {
 							var id = errors[i][0], info = errors[i][1];
 							$('#'+id).closest('p').append( ' ', $('<u>').text(info) );
@@ -363,10 +374,10 @@
 						nowSaving = false;
 					}
 					else {
-						$('#gconfig-save-status').attr('class', '').text("Zapisywanie...");
+						$('#gconfig-save-status').attr('class', '').text( mw.msg('gConfig-prefs-saving') );
 						saveSettings(toSave, function(){
 							nowSaving = false;
-							$('#gconfig-save-status').attr('class', 'success').text("Zapisano!");
+							$('#gconfig-save-status').attr('class', 'success').text( mw.msg('gConfig-prefs-saved') );
 						})
 					}
 				}
@@ -388,7 +399,7 @@
 					$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
 					if(gConfig.legacySettings.indexOf(inputName) != -1) {
 						$input.prop('disabled', true);
-						$input.attr('title', "To ustawienie jest w tej chwili wpisane na stałe w jednym z twoich plików .js. Usuń je stamtąd, aby stało się modyfikowalne.");
+						$input.attr('title', mw.msg('gConfig-prefs-legacy-setting'));
 					}
 					
 					$content.append(
@@ -404,19 +415,19 @@
 			}
 			
 			$content.append( $('<p>').append(
-				$("<input type=submit>").attr('value', 'Zapisz'),
+				$("<input type=submit>").attr('value', mw.msg('gConfig-prefs-save') ),
 				' ',
 				$('<span>').attr('id', 'gconfig-save-status')
 			) );
 			
-			var info = $('<p>').text('Na tej stronie możesz zmienić ustawienia wykorzystywane przez gadżety.');
-			document.title = 'Preferencje gadżetów';
-			$('h1').first().text('Preferencje gadżetów');
+			var info = $('<p>').text( mw.msg('gConfig-prefs-page-info') );
+			document.title = mw.msg('gConfig-prefs-page-title');
+			$('h1').first().text( mw.msg('gConfig-prefs-page-title') );
 			$('#mw-content-text').empty().append(info, $content);
 		}
 		
 		$(document).ready(function(){
-			mw.util.addPortletLink('p-personal', mw.util.wikiGetlink('Special:GadgetPrefs'), 'Preferencje gadżetów', 'pt-gadgetprefs', null, null, document.getElementById('pt-watchlist'));
+			mw.util.addPortletLink('p-personal', mw.util.wikiGetlink('Special:GadgetPrefs'), mw.msg('gConfig-prefs-personal-link'), 'pt-gadgetprefs', null, null, document.getElementById('pt-watchlist'));
 			$('#pt-gadgetprefs').hide();
 		});
 		
