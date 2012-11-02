@@ -404,10 +404,10 @@
 			}
 			
 			$content.append( $('<p>').append(
-				$("<input type=submit>").attr('value', 'Zapisz') ),
+				$("<input type=submit>").attr('value', 'Zapisz'),
 				' ',
 				$('<span>').attr('id', 'gconfig-save-status')
-			);
+			) );
 			
 			var info = $('<p>').text('Na tej stronie możesz zmienić ustawienia wykorzystywane przez gadżety.');
 			document.title = 'Preferencje gadżetów';
