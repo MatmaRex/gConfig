@@ -73,7 +73,7 @@
 				var name = internalName(settings[i][0], settings[i][1]);
 				var value = settings[i][2];
 				
-				$.cookie(name, value, {expires: 365});
+				$.cookie(name, value, {expires: 365, path:'/'});
 				if((''+value).match(/\|/)) {
 					api.post({
 						action:'options', optionname:name, optionvalue:value, token:optionsToken
