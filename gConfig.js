@@ -155,7 +155,7 @@
 		//   * name [required]: internal name of this setting, not shown anywhere
 		//   * desc [required]: description shown on the prefs page
 		//   * type [required]: boolean / integer / numeric / string, each type is handled differently on the prefs page and validated
-		//   * default [required]: default value
+		//   * deflt [required]: default value
 		//   * validation: either an array [min, max] (for numeric/integer types), or a function that performs the validation.
 		//     The function will receive value inputted by user as first (and only) parameter, and to indicate that the value
 		//     is unacceptable must throw an error; the message used will be displayed on the prefs page to the user.
@@ -170,35 +170,35 @@
 		//       name: 'boolean',
 		//       desc: 'Boolean value.',
 		//       type: 'boolean',
-		//       default: true
+		//       deflt: true
 		//     }, {
 		//       name: 'integer',
 		//       desc: 'Integral number between 0 and 30.',
 		//       type: 'integer',
-		//       default: 20,
+		//       deflt: 20,
 		//       validation: [0, 30]
 		//     }, {
 		//       name: 'float',
 		//       desc: 'Floating-point number between -1 and 1.',
 		//       type: 'numeric',
-		//       default: 0.5,
+		//       deflt: 0.5,
 		//       validation: [-1, 1]
 		//     }, {
 		//       name: 'string',
 		//       desc: 'Text value.',
 		//       type: 'string',
-		//       default: 'test'
+		//       deflt: 'test'
 		//     }, {
 		//       name: 'evenonly-passive',
 		//       desc: 'Even numbers only. Will be rounded down if an odd number is given.',
 		//       type: 'integer',
-		//       default: 0,
+		//       deflt: 0,
 		//       validation: function(n){ return n%2!=0 ? n-1 : n; }
 		//     }, {
 		//       name: 'evenonly-agressive',
 		//       desc: 'Even numbers only. Will prevent saving if an odd number is given.',
 		//       type: 'integer',
-		//       default: 0,
+		//       deflt: 0,
 		//       validation: function(n){ if(n%2!=0){ throw 'Requires an even number!' }; return n; }
 		//     }
 		//   ]);
@@ -216,7 +216,7 @@
 				if(!sett.name) throw errorMessage.replace('%', 'name')
 				if(!sett.desc) throw errorMessage.replace('%', 'desc')
 				if(!sett.type) throw errorMessage.replace('%', 'type')
-				if(sett.default == undefined) throw errorMessage.replace('%', 'default')
+				if(sett.deflt == undefined) throw errorMessage.replace('%', 'deflt')
 				
 				var isLegacy = false;
 				if(sett.legacy) {
@@ -235,7 +235,7 @@
 				}
 				if(!isLegacy) {
 					value = readRawSetting(gadget, sett.name)
-					if(value == undefined) value = sett.default;
+					if(value == undefined) value = sett.deflt;
 					value = validateAndCanonicalize(value, sett.type, sett.validation);
 				}
 				
