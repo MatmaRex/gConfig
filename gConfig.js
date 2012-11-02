@@ -22,6 +22,9 @@
 			'gConfig-prefs-saved': "Zapisano!",
 			'gConfig-prefs-invalid-values': "Nieprawidłowe wartości.",
 			'gConfig-prefs-legacy-setting': "To ustawienie jest w tej chwili wpisane na stałe w jednym z twoich plików .js. Usuń je stamtąd, aby stało się modyfikowalne.",
+			'gConfig-prefs-not-an-integer': "Podana wartość nie jest liczbą całkowitą.",
+			'gConfig-prefs-out-of-range-min': "Podana wartość jest mniejsza od minimalnej dozwolonej.",
+			'gConfig-prefs-out-of-range-max': "Podana wartość jest większa od maksymalnej dozwolonej."
 		});
 		
 		// Global gConfig object.
@@ -110,6 +113,7 @@
 		
 		// validates and canonicalizes setting's values.
 		// doesn't catch errors raised by validation().
+		// can throw further errors (for numeric values: not an int, out of range)
 		function validateAndCanonicalize(value, type, validation)
 		{
 			if(type == 'boolean') {
@@ -117,6 +121,7 @@
 			} else if(type == 'string') {
 				value = '' + value;
 			} else if(type == 'integer') {
+				if(parseInt(value, 10) != parseFloat(value)) throw mw.msg('gConfig-prefs-not-an-integer');
 				value = parseInt(value, 10);
 			} else if(type == 'numeric') {
 				value = parseFloat(value);
@@ -126,8 +131,8 @@
 				value = validation(value);
 			} else if($.isArray(validation) && (type == 'integer' || type == 'numeric')) {
 				var min = validation[0], max = validation[1];
-				if(value < min) value = min;
-				if(value > max) value = max;
+				if(value < min) throw mw.msg('gConfig-prefs-out-of-range-min');
+				if(value > max) throw mw.msg('gConfig-prefs-out-of-range-max');
 			}
 			
 			return value;
