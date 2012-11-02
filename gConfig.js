@@ -437,6 +437,7 @@
 			
 			$form = $('<form>').attr('id', 'gconfig-form').append( $content );
 			$form.on('submit', onsubmit);
+			$form.on('invalid', onsubmit); // we do our own validation - stop the browser from showing its error messages
 			
 			var info = $('<p>').text( mw.msg('gConfig-prefs-page-info') );
 			document.title = mw.msg('gConfig-prefs-page-title');
