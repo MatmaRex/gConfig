@@ -16,7 +16,7 @@
 (function(mw, $){
 	mw.loader.using(['jquery.cookie', 'mediawiki', 'mediawiki.api'], function(){
 		mw.messages.set({
-			'gConfig-prefs-page-info': "Na tej stronie możesz zmienić ustawienia wykorzystywane przez gadżety.",
+			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
 			'gConfig-prefs-personal-link': "Preferencje gadżetów",
 			'gConfig-prefs-save': "Zapisz",
@@ -449,7 +449,7 @@
 			$form.on('submit', onsubmit);
 			$form.on('invalid', onsubmit); // we do our own validation - stop the browser from showing its error messages
 			
-			var info = $('<p>').text( mw.msg('gConfig-prefs-page-info') );
+			var info = $.parseHTML( mw.msg('gConfig-prefs-page-info') );
 			document.title = mw.msg('gConfig-prefs-page-title');
 			$('h1').first().text( mw.msg('gConfig-prefs-page-title') );
 			$('#mw-content-text').empty().append(info, $form);
