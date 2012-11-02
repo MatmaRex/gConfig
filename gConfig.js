@@ -336,11 +336,10 @@
 			api.get({action:'tokens', type:'options'}).done(function(json){ optionsToken = json['tokens']['optionstoken'] });
 			
 			
-			var $content = $('<form>');
-			$content.on('submit', function(e){
+			var onsubmit = function(e){
 				if(!nowSaving) {
 					nowSaving = true;
-					$content.find('u').remove(); // remove bad data infos
+					$content.find('.gconfig-pref-error').empty(); // remove infos about invalid values, if any
 					
 					var toSave = [];
 					var errors = [];
@@ -366,10 +365,10 @@
 					}
 					
 					if(errors.length > 0) {
-						$('#gconfig-save-status').attr('class', 'error').text( mw.msg('gConfig-prefs-invalid-values') );
+						$('#gconfig-save-status').attr('class', 'gconfig-save-error').text( mw.msg('gConfig-prefs-invalid-values') );
 						for(var i=0; i<errors.length; i++) {
 							var id = errors[i][0], info = errors[i][1];
-							$('#'+id).closest('p').append( ' ', $('<u>').text(info) );
+							$('#'+id).closest('tr').find('.gconfig-pref-error').text(info)
 						}
 						nowSaving = false;
 					}
@@ -377,18 +376,25 @@
 						$('#gconfig-save-status').attr('class', '').text( mw.msg('gConfig-prefs-saving') );
 						saveSettings(toSave, function(){
 							nowSaving = false;
-							$('#gconfig-save-status').attr('class', 'success').text( mw.msg('gConfig-prefs-saved') );
+							$('#gconfig-save-status').attr('class', 'gconfig-save-success').text( mw.msg('gConfig-prefs-saved') );
 						})
 					}
 				}
 				
 				e.preventDefault();
 				return false;
-			})
+			}
 			
+			var $content = $('<table>');
 			for(var i=0; i<gConfig.registeredGadgets.length; i++) {
 				var gadget = gConfig.registeredGadgets[i];
-				$content.append( $('<h2>').text(gConfig.readableNames[gadget]) );
+				$content.append(
+					$('<tr>').append(
+						$('<td>').attr('colspan', 2).append(
+							$('<h2>').text(gConfig.readableNames[gadget])
+						)
+					)
+				);
 				
 				for(var j=0; j<gConfig.data[gadget].length; j++) {
 					var setting = gConfig.data[gadget][j];
@@ -397,33 +403,40 @@
 					var $input = inputFor( gConfig.get(gadget, setting.name), setting.type, setting.validation );
 					$input.attr('name', inputName).attr('id', inputName);
 					$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
-					if(gConfig.legacySettings.indexOf(inputName) != -1) {
-						$input.prop('disabled', true);
-						$input.attr('title', mw.msg('gConfig-prefs-legacy-setting'));
-					}
+					
+					var isLegacy = !!(gConfig.legacySettings.indexOf(inputName) != -1);
 					
 					$content.append(
-						$('<p>').append(
-							$('<label>', {'for': inputName}).append(
-								$input,
-								' ',
-								setting.desc
+						$('<tr>').append(
+							$('<td>').append( $input.prop('disabled', !!isLegacy) ),
+							$('<td>').append(
+								$('<p>').addClass('gconfig-pref-label').append( $('<label>').attr('for', inputName).text(setting.desc) ),
+								$('<p>').addClass('gconfig-pref-legacy-note').text( isLegacy ? mw.msg('gConfig-prefs-legacy-setting') : '' ),
+								$('<p>').addClass('gconfig-pref-error')
 							)
 						)
 					)
 				}
 			}
 			
-			$content.append( $('<p>').append(
-				$("<input type=submit>").attr('value', mw.msg('gConfig-prefs-save') ),
-				' ',
-				$('<span>').attr('id', 'gconfig-save-status')
-			) );
+			// save button
+			$content.append(
+				$('<tr>').append(
+					$('<td>'),
+					$('<td>').append(
+						$('<input type=submit>').attr('id', 'gconfig-save-button').attr('value', mw.msg('gConfig-prefs-save') ),
+						$('<p>').attr('id', 'gconfig-save-status')
+					)
+				)
+			)
+			
+			$form = $('<form>').attr('id', 'gconfig-form').append( $content );
+			$form.on('submit', onsubmit);
 			
 			var info = $('<p>').text( mw.msg('gConfig-prefs-page-info') );
 			document.title = mw.msg('gConfig-prefs-page-title');
 			$('h1').first().text( mw.msg('gConfig-prefs-page-title') );
-			$('#mw-content-text').empty().append(info, $content);
+			$('#mw-content-text').empty().append(info, $form);
 		}
 		
 		$(document).ready(function(){

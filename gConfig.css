@@ -1,0 +1,22 @@
+/**
+ * gConfig is a handy tool to allow users to modify settings of your gadget, with little hassle on your or their side.
+ * 
+ * See gConfig.js.
+ * 
+ * Version: 0.1
+ * Dual-licensed CC-BY-SA 3.0 or newer, GFDL 1.3 or newer
+ * Author: [[w:pl:User:Matma Rex]]
+ */
+#gconfig-form table td:first-child { text-align: right; }
+#gconfig-form table td:last-child { text-align: left; }
+
+#gconfig-form table td:first-child { vertical-align: top; }
+#gconfig-form table td:last-child p:first-child { margin-top: 0 }
+
+.gconfig-pref-legacy-note { font-style: italic; font-size: smaller; line-height: 1em; }
+.gconfig-pref-error { color: #a81919; line-height: 1em; }
+
+#gconfig-save-status { display: inline; margin-left: 1em; }
+#gconfig-save-button { margin-top: 1em; }
+.gconfig-save-error { color: #a81919; }
+.gconfig-save-success { color: #519548; }
