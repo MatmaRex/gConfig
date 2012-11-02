@@ -228,9 +228,11 @@
 					}
 					
 					if(object[property] != undefined) {
-						value = object[property];
-						gConfig.legacySettings.push( internalName(gadget, sett.name) );
-						isLegacy = true;
+						try {
+							value = validateAndCanonicalize(object[property], sett.type, sett.validation);
+							gConfig.legacySettings.push( internalName(gadget, sett.name) );
+							isLegacy = true;
+						} catch(er) {} // if validation error, ignore this
 					}
 				}
 				if(!isLegacy) {
