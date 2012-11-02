@@ -7,7 +7,7 @@
  * 
  * For more examples, see per-function docs below.
  * 
- * Version: 0.1
+ * Version: 0.2
  * Dual-licensed CC-BY-SA 3.0 or newer, GFDL 1.3 or newer
  * Author: [[w:pl:User:Matma Rex]]
  */
