@@ -18,6 +18,7 @@
 		mw.messages.set({
 			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
+			'gConfig-prefs-no-gadgets': "Obecnie nie masz włączonych żadnych gadżetów korzystających z gConfiga.",
 			'gConfig-prefs-save': "Zapisz",
 			'gConfig-prefs-saving': "Zapisywanie...",
 			'gConfig-prefs-saved': "Zapisano!",
@@ -399,50 +400,56 @@
 				return false;
 			}
 			
-			var $content = $('<table>');
-			for(var i=0; i<gConfig.registeredGadgets.length; i++) {
-				var gadget = gConfig.registeredGadgets[i];
-				$content.append(
-					$('<tr>').append(
-						$('<td>').attr('colspan', 2).append(
-							$('<h2>').text(gConfig.readableNames[gadget])
-						)
-					)
-				);
-				
-				for(var j=0; j<gConfig.data[gadget].length; j++) {
-					var setting = gConfig.data[gadget][j];
-					var inputName = internalName(gadget, setting.name);
-					
-					var $input = inputFor( gConfig.get(gadget, setting.name), setting.type, setting.validation );
-					$input.attr('name', inputName).attr('id', inputName);
-					$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
-					
-					var isLegacy = !!($.inArray(inputName, gConfig.legacySettings) != -1);
-					
+			var $content;
+			if(gConfig.registeredGadgets.length > 0) {
+				$content = $('<table>');
+				for(var i=0; i<gConfig.registeredGadgets.length; i++) {
+					var gadget = gConfig.registeredGadgets[i];
 					$content.append(
 						$('<tr>').append(
-							$('<td>').append( $input.prop('disabled', !!isLegacy) ),
-							$('<td>').append(
-								$('<p>').addClass('gconfig-pref-label').append( $('<label>').attr('for', inputName).text(setting.desc) ),
-								$('<p>').addClass('gconfig-pref-legacy-note').text( isLegacy ? mw.msg('gConfig-prefs-legacy-setting') : '' ),
-								$('<p>').addClass('gconfig-pref-error')
+							$('<td>').attr('colspan', 2).append(
+								$('<h2>').text(gConfig.readableNames[gadget])
 							)
 						)
-					)
+					);
+					
+					for(var j=0; j<gConfig.data[gadget].length; j++) {
+						var setting = gConfig.data[gadget][j];
+						var inputName = internalName(gadget, setting.name);
+						
+						var $input = inputFor( gConfig.get(gadget, setting.name), setting.type, setting.validation );
+						$input.attr('name', inputName).attr('id', inputName);
+						$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
+						
+						var isLegacy = !!($.inArray(inputName, gConfig.legacySettings) != -1);
+						
+						$content.append(
+							$('<tr>').append(
+								$('<td>').append( $input.prop('disabled', !!isLegacy) ),
+								$('<td>').append(
+									$('<p>').addClass('gconfig-pref-label').append( $('<label>').attr('for', inputName).text(setting.desc) ),
+									$('<p>').addClass('gconfig-pref-legacy-note').text( isLegacy ? mw.msg('gConfig-prefs-legacy-setting') : '' ),
+									$('<p>').addClass('gconfig-pref-error')
+								)
+							)
+						)
+					}
 				}
-			}
-			
-			// save button
-			$content.append(
-				$('<tr>').append(
-					$('<td>'),
-					$('<td>').append(
-						$('<input type=submit>').attr('id', 'gconfig-save-button').attr('value', mw.msg('gConfig-prefs-save') ),
-						$('<p>').attr('id', 'gconfig-save-status')
+				
+				// save button
+				$content.append(
+					$('<tr>').append(
+						$('<td>'),
+						$('<td>').append(
+							$('<input type=submit>').attr('id', 'gconfig-save-button').attr('value', mw.msg('gConfig-prefs-save') ),
+							$('<p>').attr('id', 'gconfig-save-status')
+						)
 					)
 				)
-			)
+			}
+			else {
+				$content = $('<p>').text( mw.msg('gConfig-prefs-no-gadgets') );
+			}
 			
 			$form = $('<form>').attr('id', 'gconfig-form').append( $content );
 			$form.on('submit', onsubmit);
@@ -455,5 +462,6 @@
 		}
 		
 		window.gConfig = gConfig;
+		specialPage();
 	})
 })(mediaWiki, jQuery);
