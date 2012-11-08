@@ -18,7 +18,6 @@
 		mw.messages.set({
 			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
-			'gConfig-prefs-personal-link': "Preferencje gadżetów",
 			'gConfig-prefs-save': "Zapisz",
 			'gConfig-prefs-saving': "Zapisywanie...",
 			'gConfig-prefs-saved': "Zapisano!",
@@ -247,8 +246,6 @@
 			gConfig.registeredGadgets.push(gadget);
 			gConfig.readableNames[gadget] = readableName;
 			
-			$('#pt-gadgetprefs').show();
-			
 			if(needSynchro) {
 				needSynchro = false;
 				gConfig.synchronise(function(){});
@@ -456,11 +453,6 @@
 			$('h1').first().text( mw.msg('gConfig-prefs-page-title') );
 			$('#mw-content-text').empty().append(info, $form);
 		}
-		
-		$(document).ready(function(){
-			mw.util.addPortletLink('p-personal', mw.util.wikiGetlink('Special:GadgetPrefs'), mw.msg('gConfig-prefs-personal-link'), 'pt-gadgetprefs', null, null, document.getElementById('pt-watchlist'));
-			$('#pt-gadgetprefs').hide();
-		});
 		
 		window.gConfig = gConfig;
 	})
