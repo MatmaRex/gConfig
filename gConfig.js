@@ -76,11 +76,11 @@
 				$.cookie(name, value, {expires: 365, path:'/'});
 				if((''+value).match(/\|/)) {
 					api.post({
-						action:'options', optionname:name, optionvalue:value, token:optionsToken
+						action:'options', optionname:'userjs-'+name, optionvalue:value, token:optionsToken
 					}).done(function(j){ saveSettingsCallback(1) });
 				}
 				else {
-					grouped.push(name+'='+value);
+					grouped.push('userjs-'+name+'='+value);
 				}
 			}
 			
@@ -105,10 +105,10 @@
 		function readRawSetting(gadget, settingName)
 		{
 			var name = internalName(gadget, settingName);
-			var value = mw.user.options.get(name);
+			var value = mw.user.options.get('userjs-'+name);
 			if(value == undefined) value = $.cookie(name);
 			
-			if(value == undefined || mw.user.options.get(name) != $.cookie(name) ) needSynchro = true;
+			if(value == undefined || mw.user.options.get('userjs-'+name) != $.cookie(name) ) needSynchro = true;
 			
 			return value;
 		}
