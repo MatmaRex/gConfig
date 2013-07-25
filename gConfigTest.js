@@ -50,7 +50,8 @@ gConfig.register('lipsum', 'Lorem ipsum gadget', [
 		validation: [0, 30]
 	}, {
 		name: 'float',
-		desc: 'Floating-point number between -1 and 1.',
+		desc: '[[Floating-point number]] between -1 and 1.',
+		descMode: 'wikitext',
 		type: 'numeric',
 		deflt: 0.5,
 		validation: [-1, 1]

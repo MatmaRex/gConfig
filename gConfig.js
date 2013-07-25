@@ -11,10 +11,10 @@
  * 
  * Version: 0.3
  * Dual-licensed CC-BY-SA 3.0 or newer, GFDL 1.3 or newer
- * Author: [[w:pl:User:Matma Rex]]
+ * Author: [[w:pl:User:Matma Rex]], patches: [[w:pl:User:Kaligula]]
  */
 (function(mw, $){
-	mw.loader.using(['jquery.cookie', 'mediawiki', 'mediawiki.api'], function(){
+	mw.loader.using(['jquery.cookie', 'mediawiki', 'mediawiki.api', 'mediawiki.jqueryMsg'], function(){
 		mw.messages.set({
 			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
@@ -154,6 +154,8 @@
 		// * settings is an array of configuration options for this gadget. Each option is an object with the following keys:
 		//   * name [required]: internal name of this setting, not shown anywhere
 		//   * desc [required]: description shown on the prefs page
+		//   * descMode: how to treat the description text. 'plain' (default) for plain text, 'wikitext' for basic wikicode
+		//     parsing (links, text formatting) using jqueryMsg
 		//   * type [required]: boolean / integer / numeric / string, each type is handled differently on the prefs page and validated
 		//   * deflt [required]: default value
 		//   * validation: either an array [min, max] (for numeric/integer types), or a function that performs the validation.
@@ -179,7 +181,8 @@
 		//       validation: [0, 30]
 		//     }, {
 		//       name: 'float',
-		//       desc: 'Floating-point number between -1 and 1.',
+		//       desc: '[[Floating-point number]] between -1 and 1.',
+		//       descMode: 'wikitext',
 		//       type: 'numeric',
 		//       deflt: 0.5,
 		//       validation: [-1, 1]
@@ -343,6 +346,14 @@
 			return input;
 		}
 		
+		function jqueryMsgParse(wikitext)
+		{
+			var map = new mw.Map();
+			map.set('tmp', wikitext);
+			var parser = new mw.jqueryMsg.parser({messages: map});
+			return parser.parse('tmp').contents();
+		}
+		
 		var nowSaving = false;
 		function specialPage()
 		{
@@ -422,12 +433,15 @@
 						$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
 						
 						var isLegacy = !!($.inArray(inputName, gConfig.legacySettings) != -1);
+						var settingDesc = setting.descMode == 'wikitext'
+							? jqueryMsgParse(setting.desc)
+							: $( document.createTextNode(setting.desc) );
 						
 						$content.append(
 							$('<tr>').append(
 								$('<td>').append( $input.prop('disabled', !!isLegacy) ),
 								$('<td>').append(
-									$('<p>').addClass('gconfig-pref-label').append( $('<label>').attr('for', inputName).text(setting.desc) ),
+									$('<p>').addClass('gconfig-pref-label').append( $('<label>').attr('for', inputName).append(settingDesc) ),
 									$('<p>').addClass('gconfig-pref-legacy-note').text( isLegacy ? mw.msg('gConfig-prefs-legacy-setting') : '' ),
 									$('<p>').addClass('gconfig-pref-error')
 								)
