@@ -346,12 +346,15 @@
 			return input;
 		}
 		
+		// Needed to work around bug 52042...
+		var jqueryMsgParseCounter = 0;
 		function jqueryMsgParse(wikitext)
 		{
+			jqueryMsgParseCounter++;
 			var map = new mw.Map();
-			map.set('tmp', wikitext);
+			map.set('tmp'+jqueryMsgParseCounter, wikitext);
 			var parser = new mw.jqueryMsg.parser({messages: map});
-			return parser.parse('tmp').contents();
+			return parser.parse('tmp'+jqueryMsgParseCounter).contents();
 		}
 		
 		var nowSaving = false;
