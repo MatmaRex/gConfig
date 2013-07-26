@@ -259,7 +259,7 @@
 			gConfig.registeredGadgets.push(gadget);
 			gConfig.gadgetsInfo[gadget] = (typeof gadgetInfo == 'string')
 				? {name: gadgetInfo}
-				: gadgetInfo
+				: gadgetInfo;
 			
 			if(needSynchro) {
 				needSynchro = false;
@@ -431,9 +431,9 @@
 				for(var i=0; i<gConfig.registeredGadgets.length; i++) {
 					var gadget = gConfig.registeredGadgets[i];
 					
-					var gadgetName = (gConfig.gadgetsInfo[gadget].descriptionPage)
+					var gadgetName = (typeof gConfig.gadgetsInfo[gadget].descriptionPage == 'string')
 						? $('<a>').attr({
-								href: '/wiki/'+encodeURIComponent(gConfig.gadgetsInfo[gadget].descriptionPage),
+								href:  '/wiki/'+encodeURIComponent(gConfig.gadgetsInfo[gadget].descriptionPage),
 								title: gConfig.gadgetsInfo[gadget].descriptionPage
 							}).text(gConfig.gadgetsInfo[gadget].name)
 						: $( document.createTextNode(gConfig.gadgetsInfo[gadget].name) );
