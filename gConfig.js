@@ -152,7 +152,7 @@
 		// * gadget is an internal name, must consist only of ASCII letters, numbers or underscore.
 		// * gadgetInfo is an object with following keys:
 		//   * name [required]: user-visible name, shown in preferences' headings.
-		//   * link: wikilink to gadget's description page.
+		//   * descriptionPage: name of gadget's description page.
 		// * settings is an array of configuration options for this gadget. Each option is an object with the following keys:
 		//   * name [required]: internal name of this setting, not shown anywhere
 		//   * desc [required]: description shown on the prefs page
@@ -173,7 +173,7 @@
 		//     'lipsum',
 		//     {
 		//       name: 'Lorem ipsum gadget',
-		//       link: 'Wikipedia:Lorem ipsum gadget'
+		//       descriptionPage: 'Wikipedia:Lorem ipsum gadget'
 		//     },
 		//     [
 		//       {
@@ -259,10 +259,7 @@
 			gConfig.registeredGadgets.push(gadget);
 			gConfig.gadgetsInfo[gadget] = (typeof gadgetInfo == 'string')
 				? {name: gadgetInfo}
-				: {
-					name: gadgetInfo.name,
-					link: (typeof gadgetInfo.link!='undefined') ? gadgetInfo.link : false
-				}
+				: gadgetInfo
 			
 			if(needSynchro) {
 				needSynchro = false;
@@ -434,8 +431,11 @@
 				for(var i=0; i<gConfig.registeredGadgets.length; i++) {
 					var gadget = gConfig.registeredGadgets[i];
 					
-					var gadgetName = (gConfig.gadgetsInfo[gadget].link)
-						? jqueryMsgParse('[['+gConfig.gadgetsInfo[gadget].link+'|'+gConfig.gadgetsInfo[gadget].name+']]')
+					var gadgetName = (gConfig.gadgetsInfo[gadget].descriptionPage)
+						? $('<a>').attr({
+								href: '/wiki/'+encodeURIComponent(gConfig.gadgetsInfo[gadget].descriptionPage),
+								title: gConfig.gadgetsInfo[gadget].descriptionPage
+							}).text(gConfig.gadgetsInfo[gadget].name)
 						: $( document.createTextNode(gConfig.gadgetsInfo[gadget].name) );
 					
 					$content.append(
