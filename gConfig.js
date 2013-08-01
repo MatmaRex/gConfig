@@ -142,15 +142,17 @@
 		
 		// List of all registered gadgets.
 		gConfig.registeredGadgets = [];
-		// Map of internal gadget names => user-visible gadget names.
-		gConfig.readableNames = {};
+		// Map of internal gadget names => gadget infos (e.g. user-visible gadget names, links).
+		gConfig.gadgetsInfo = {};
 		// List of internal names of settings which were loaded using the legacy method.
 		gConfig.legacySettings = [];
 		
 		// Register configuration for a new gadget.
 		// 
 		// * gadget is an internal name, must consist only of ASCII letters, numbers or underscore.
-		// * readableName is an user-visible name, shown in preferences' headings.
+		// * gadgetInfo is an object with following keys:
+		//   * name [required]: user-visible name, shown in preferences' headings.
+		//   * descriptionPage: name of gadget's description page.
 		// * settings is an array of configuration options for this gadget. Each option is an object with the following keys:
 		//   * name [required]: internal name of this setting, not shown anywhere
 		//   * desc [required]: description shown on the prefs page
@@ -167,45 +169,52 @@
 		//     it's value will be taken as the value for this pref and the pref will be marked as legacy and become non-editable.
 		// 
 		// A lengthy example:
-		//   gConfig.register('lipsum', 'Lorem ipsum gadget', [
+		//   gConfig.register(
+		//     'lipsum',
 		//     {
-		//       name: 'boolean',
-		//       desc: 'Boolean value.',
-		//       type: 'boolean',
-		//       deflt: true
-		//     }, {
-		//       name: 'integer',
-		//       desc: 'Integral number between 0 and 30.',
-		//       type: 'integer',
-		//       deflt: 20,
-		//       validation: [0, 30]
-		//     }, {
-		//       name: 'float',
-		//       desc: '[[Floating-point number]] between -1 and 1.',
-		//       descMode: 'wikitext',
-		//       type: 'numeric',
-		//       deflt: 0.5,
-		//       validation: [-1, 1]
-		//     }, {
-		//       name: 'string',
-		//       desc: 'Text value.',
-		//       type: 'string',
-		//       deflt: 'test'
-		//     }, {
-		//       name: 'evenonly-passive',
-		//       desc: 'Even numbers only. Will be rounded down if an odd number is given.',
-		//       type: 'integer',
-		//       deflt: 0,
-		//       validation: function(n){ return n%2!=0 ? n-1 : n; }
-		//     }, {
-		//       name: 'evenonly-agressive',
-		//       desc: 'Even numbers only. Will prevent saving if an odd number is given.',
-		//       type: 'integer',
-		//       deflt: 0,
-		//       validation: function(n){ if(n%2!=0){ throw 'Requires an even number!' }; return n; }
-		//     }
-		//   ]);
-		gConfig.register = function(gadget, readableName, settings)
+		//       name: 'Lorem ipsum gadget',
+		//       descriptionPage: 'Wikipedia:Lorem ipsum gadget'
+		//     },
+		//     [
+		//       {
+		//         name: 'boolean',
+		//         desc: 'Boolean value.',
+		//         type: 'boolean',
+		//         deflt: true
+		//       }, {
+		//         name: 'integer',
+		//         desc: 'Integral number between 0 and 30.',
+		//         type: 'integer',
+		//         deflt: 20,
+		//         validation: [0, 30]
+		//       }, {
+		//         name: 'float',
+		//         desc: '[[Floating-point number]] between -1 and 1.',
+		//         descMode: 'wikitext',
+		//         type: 'numeric',
+		//         deflt: 0.5,
+		//         validation: [-1, 1]
+		//       }, {
+		//         name: 'string',
+		//         desc: 'Text value.',
+		//         type: 'string',
+		//         deflt: 'test'
+		//       }, {
+		//         name: 'evenonly-passive',
+		//         desc: 'Even numbers only. Will be rounded down if an odd number is given.',
+		//         type: 'integer',
+		//         deflt: 0,
+		//         validation: function(n){ return n%2!=0 ? n-1 : n; }
+		//       }, {
+		//         name: 'evenonly-agressive',
+		//         desc: 'Even numbers only. Will prevent saving if an odd number is given.',
+		//         type: 'integer',
+		//         deflt: 0,
+		//         validation: function(n){ if(n%2!=0){ throw 'Requires an even number!' }; return n; }
+		//       }
+		//     ]
+		//   );
+		gConfig.register = function(gadget, gadgetInfo, settings)
 		{
 			gConfig.data[gadget] = settings;
 			gConfig.settings[gadget] = {};
@@ -248,7 +257,9 @@
 			}
 			
 			gConfig.registeredGadgets.push(gadget);
-			gConfig.readableNames[gadget] = readableName;
+			gConfig.gadgetsInfo[gadget] = (typeof gadgetInfo == 'string')
+				? {name: gadgetInfo}
+				: gadgetInfo;
 			
 			if(needSynchro) {
 				needSynchro = false;
@@ -419,10 +430,18 @@
 				$content = $('<table>');
 				for(var i=0; i<gConfig.registeredGadgets.length; i++) {
 					var gadget = gConfig.registeredGadgets[i];
+					
+					var gadgetName = (typeof gConfig.gadgetsInfo[gadget].descriptionPage == 'string')
+						? $('<a>').attr({
+								href:  '/wiki/'+encodeURIComponent(gConfig.gadgetsInfo[gadget].descriptionPage),
+								title: gConfig.gadgetsInfo[gadget].descriptionPage
+							}).text(gConfig.gadgetsInfo[gadget].name)
+						: $( document.createTextNode(gConfig.gadgetsInfo[gadget].name) );
+					
 					$content.append(
 						$('<tr>').append(
 							$('<td>').attr('colspan', 2).append(
-								$('<h2>').text(gConfig.readableNames[gadget])
+								$('<h2>').append(gadgetName)
 							)
 						)
 					);
