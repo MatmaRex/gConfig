@@ -36,41 +36,48 @@ gConfig.register('disFixer', 'disFixer', [
 	}
 ]);
 
-gConfig.register('lipsum', 'Lorem ipsum gadget', [
+gConfig.register(
+	'lipsum',
 	{
-		name: 'boolean',
-		desc: 'Boolean value.',
-		type: 'boolean',
-		deflt: true
-	}, {
-		name: 'integer',
-		desc: 'Integral number between 0 and 30.',
-		type: 'integer',
-		deflt: 20,
-		validation: [0, 30]
-	}, {
-		name: 'float',
-		desc: '[[Floating-point number]] between -1 and 1.',
-		descMode: 'wikitext',
-		type: 'numeric',
-		deflt: 0.5,
-		validation: [-1, 1]
-	}, {
-		name: 'string',
-		desc: 'Text value.',
-		type: 'string',
-		deflt: 'test'
-	}, {
-		name: 'evenonly-passive',
-		desc: 'Even numbers only. Will be rounded down if an odd number is given.',
-		type: 'integer',
-		deflt: 0,
-		validation: function(n){ return n%2!=0 ? n-1 : n; }
-	}, {
-		name: 'evenonly-agressive',
-		desc: 'Even numbers only. Will prevent saving if an odd number is given.',
-		type: 'integer',
-		deflt: 0,
-		validation: function(n){ if(n%2!=0){ throw 'Requires an even number!' }; return n; }
-	}
-]);
+		name: 'Lorem ipsum gadget',
+		descriptionPage: 'Wikipedia:Lorem ipsum gadget'
+	},
+	[
+		{
+			name: 'boolean',
+			desc: 'Boolean value.',
+			type: 'boolean',
+			deflt: true
+		}, {
+			name: 'integer',
+			desc: 'Integral number between 0 and 30.',
+			type: 'integer',
+			deflt: 20,
+			validation: [0, 30]
+		}, {
+			name: 'float',
+			desc: '[[Floating-point number]] between -1 and 1.',
+			descMode: 'wikitext',
+			type: 'numeric',
+			deflt: 0.5,
+			validation: [-1, 1]
+		}, {
+			name: 'string',
+			desc: 'Text value.',
+			type: 'string',
+			deflt: 'test'
+		}, {
+			name: 'evenonly-passive',
+			desc: 'Even numbers only. Will be rounded down if an odd number is given.',
+			type: 'integer',
+			deflt: 0,
+			validation: function(n){ return n%2!=0 ? n-1 : n; }
+		}, {
+			name: 'evenonly-agressive',
+			desc: 'Even numbers only. Will prevent saving if an odd number is given.',
+			type: 'integer',
+			deflt: 0,
+			validation: function(n){ if(n%2!=0){ throw 'Requires an even number!' }; return n; }
+		}
+	]
+);
