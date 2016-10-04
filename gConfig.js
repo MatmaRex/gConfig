@@ -357,17 +357,6 @@
 			return input;
 		}
 		
-		// Needed to work around bug 52042...
-		var jqueryMsgParseCounter = 0;
-		function jqueryMsgParse(wikitext)
-		{
-			jqueryMsgParseCounter++;
-			var map = new mw.Map();
-			map.set('tmp'+jqueryMsgParseCounter, wikitext);
-			var parser = new mw.jqueryMsg.parser({messages: map});
-			return parser.parse('tmp'+jqueryMsgParseCounter).contents();
-		}
-		
 		var nowSaving = false;
 		function specialPage()
 		{
@@ -455,8 +444,9 @@
 						$input.data({ 'gconfig-type': setting.type, 'gconfig-validation': setting.validation });
 						
 						var isLegacy = !!($.inArray(inputName, gConfig.legacySettings) != -1);
+						mw.messages.set('gConfig-prefs-settingdesc-'+gadget+'-'+setting.name, setting.desc);
 						var settingDesc = setting.descMode == 'wikitext'
-							? jqueryMsgParse(setting.desc)
+							? mw.message('gConfig-prefs-settingdesc-'+gadget+'-'+setting.name).parseDom()
 							: $( document.createTextNode(setting.desc) );
 						
 						$content.append(
