@@ -16,7 +16,7 @@
 (function(mw, $){
 	mw.loader.using(['jquery.cookie', 'mediawiki.api', 'mediawiki.jqueryMsg'], function(){
 		mw.messages.set({
-			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
+			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: [[{{ns:Project}}:Narzędzia/gConfig]].</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
 			'gConfig-prefs-no-gadgets': "Obecnie nie masz włączonych żadnych gadżetów korzystających z gConfiga.",
 			'gConfig-prefs-save': "Zapisz",
@@ -173,7 +173,7 @@
 		//     'lipsum',
 		//     {
 		//       name: 'Lorem ipsum gadget',
-		//       descriptionPage: 'Wikipedia:Lorem ipsum gadget'
+		//       descriptionPage: 'Project:Lorem ipsum gadget'
 		//     },
 		//     [
 		//       {
@@ -481,10 +481,10 @@
 			$form.on('submit', onsubmit);
 			$form.on('invalid', onsubmit); // we do our own validation - stop the browser from showing its error messages
 			
-			var info = $.parseHTML( mw.msg('gConfig-prefs-page-info') );
+			var $info = mw.message('gConfig-prefs-page-info').parseDom();
 			document.title = mw.msg('gConfig-prefs-page-title');
 			$('h1').first().text( mw.msg('gConfig-prefs-page-title') );
-			$('#mw-content-text').empty().append(info, $form);
+			$('#mw-content-text').empty().append($info, $form);
 		}
 		
 		window.gConfig = gConfig;
