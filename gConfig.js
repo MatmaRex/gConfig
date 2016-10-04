@@ -14,7 +14,7 @@
  * Author: [[w:pl:User:Matma Rex]], patches: [[w:pl:User:Kaligula]]
  */
 (function(mw, $){
-	mw.loader.using(['jquery.cookie', 'mediawiki', 'mediawiki.api', 'mediawiki.jqueryMsg'], function(){
+	mw.loader.using(['jquery.cookie', 'mediawiki.api', 'mediawiki.jqueryMsg'], function(){
 		mw.messages.set({
 			'gConfig-prefs-page-info': "<p>Na tej stronie możesz zmienić ustawienia włączonych gadżetów.</p><p>Informacje i dokumentacja: <a href='/wiki/Wikipedia:Narzędzia/gConfig'>Wikipedia:Narzędzia/gConfig</a>.</p>",
 			'gConfig-prefs-page-title': "Preferencje gadżetów",
