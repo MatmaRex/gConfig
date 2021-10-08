@@ -11,7 +11,7 @@
  * 
  * Version: 0.4
  * Dual-licensed CC-BY-SA 3.0 or newer, GFDL 1.3 or newer
- * Author: [[w:pl:User:Matma Rex]], patches: [[w:pl:User:Kaligula]]
+ * Author: [[w:pl:User:Matma Rex]], patches: [[w:pl:User:Kaligula]], [[w:pl:User:Peter Bowman]]
  */
 (function(mw, $){
 	mw.loader.using(['jquery.cookie', 'mediawiki.api', 'mediawiki.jqueryMsg'], function(){
@@ -37,7 +37,6 @@
 		gConfig.settings = {};
 		
 		var api = new mw.Api();
-		var optionsToken = null;
 		
 		// generate internal name for this setting.
 		// used as input names, cookie names, options' names...
@@ -61,8 +60,6 @@
 		// calls saveSettingsCallback after every successful request
 		function saveSettings(settings, callback)
 		{
-			if(!optionsToken) return false;
-			
 			totalSettingsCount = settings.length;
 			settingsCurrentCount = 0;
 			saveSettingsUserCallback = callback;
@@ -75,17 +72,15 @@
 				
 				$.cookie(name, value, {expires: 365, path:'/'});
 				if((''+value).match(/\|/)) {
-					api.post({
-						action:'options', optionname:'userjs-'+name, optionvalue:value, token:optionsToken
-					}).done(function(j){ saveSettingsCallback(1) });
+					api.saveOption('userjs-'+name, value).done(function(j){ saveSettingsCallback(1) });
 				}
 				else {
 					grouped.push('userjs-'+name+'='+value);
 				}
 			}
 			
-			api.post({
-				action:'options', change:grouped.join('|'), token:optionsToken
+			api.postWithToken('csrf', {
+				formatversion:2, action:'options', change:grouped.join('|')
 			}).done(function(j){ saveSettingsCallback(grouped.length) });
 			
 			return true;
@@ -327,14 +322,7 @@
 				});
 			}
 			
-			if(!optionsToken) {
-				api.get({action:'tokens', type:'options'}).done(function(json){
-					optionsToken = json['tokens']['optionstoken'];
-					meat();
-				});
-			} else {
-				meat();
-			}
+			meat();
 		}
 		
 		function inputFor(value, type, validation)
@@ -361,9 +349,6 @@
 		function specialPage()
 		{
 			if(mw.config.get('wgTitle') != "GadgetPrefs" || mw.config.get('wgCanonicalNamespace') != "Special") return false;
-			
-			api.get({action:'tokens', type:'options'}).done(function(json){ optionsToken = json['tokens']['optionstoken'] });
-			
 			
 			var onsubmit = function(e){
 				if(!nowSaving) {
